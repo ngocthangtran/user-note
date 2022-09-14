@@ -15,6 +15,7 @@ public class NoteModel {
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID noteId;
     private String noteTitle;
+    @Column(columnDefinition = "nvarchar(20000)")
     private String noteContent;
     @OneToMany
     @JoinColumn(name = "noteId")

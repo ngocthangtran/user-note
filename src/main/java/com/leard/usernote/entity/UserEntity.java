@@ -28,6 +28,7 @@ public class UserEntity {
     @JoinColumn(name = "userId")
     private List<NoteEntity> listNote = new ArrayList<>();
     public UserEntity(){}
+    public UserEntity(String userId){}
     public UserEntity(String username, String password) {
         this.username = username;
         this.password = password;

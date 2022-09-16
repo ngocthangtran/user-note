@@ -14,4 +14,5 @@ public interface UserService {
     NoteEntity saveNote(NoteEntity user);
     List<UserModel> getAllUser();
     void deleteUser(String userId);
+    void validateUserId(String userId);
 }

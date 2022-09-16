@@ -7,16 +7,19 @@ import com.leard.usernote.entity.UserEntity;
 import com.leard.usernote.model.UserModel;
 import com.leard.usernote.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service @RequiredArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserEntity findByUsername(String username) {
@@ -39,6 +42,7 @@ public class UserServiceImpl implements UserService{
         if(foundUser!=null && foundUser.getUserId()!=null){
             throw new BadRequestException("Username is exist!");
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         UserEntity newUser = userRepository.save(user);
         return  newUser;
     }
@@ -74,5 +78,25 @@ public class UserServiceImpl implements UserService{
             System.out.println(e.getMessage());
             throw new BadRequestException("Cannot delete user");
         }
+    }
+
+    @Override
+    public void validateUserId(String userId) {
+        Optional<UserEntity> userEntity = userRepository.findById(userId);
+        if(!userEntity.isPresent()){
+            throw new NotFoundException("UserId invalid or not exist");
+        }
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserEntity user = userRepository.findByUsername(username);
+        if(user==null){
+//            return error user note found
+            throw new UsernameNotFoundException("User not found in the database");
+        }
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("USER"));
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
     }
 }

@@ -7,6 +7,8 @@ import com.leard.usernote.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +31,8 @@ public class UserController {
     }
     @GetMapping("/")
     public ResponseEntity<ResponeObject> getUserAllUser(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(auth.getPrincipal());
 
         List<UserModel> listUser = userService.getAllUser();
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -36,7 +40,7 @@ public class UserController {
         );
     }
     @PostMapping("/")
-    public ResponseEntity<ResponeObject> createUserName(@RequestBody UserEntity user){
+    public ResponseEntity<ResponeObject> createUser(@RequestBody UserEntity user){
         UserEntity newUser = userService.saveUser(user);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponeObject("ok", "User create successful", newUser)

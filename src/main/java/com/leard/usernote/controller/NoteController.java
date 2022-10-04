@@ -5,8 +5,6 @@ import com.leard.usernote.entity.ResponeObject;
 import com.leard.usernote.entity.UserEntity;
 import com.leard.usernote.service.NoteService;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.bridge.IMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

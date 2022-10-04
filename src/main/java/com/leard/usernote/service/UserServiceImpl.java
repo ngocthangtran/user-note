@@ -7,6 +7,8 @@ import com.leard.usernote.entity.UserEntity;
 import com.leard.usernote.model.UserModel;
 import com.leard.usernote.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -96,7 +99,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw new UsernameNotFoundException("User not found in the database");
         }
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("USER"));
+        if(user.getUsername().equals("thang.tn")==true){
+            authorities.add(new SimpleGrantedAuthority("ADMIN"));
+        }else {
+            authorities.add(new SimpleGrantedAuthority("USER"));
+        }
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
     }
 }

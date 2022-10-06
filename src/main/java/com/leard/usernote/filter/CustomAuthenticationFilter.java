@@ -51,7 +51,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 //    khi ham xas thuc thanh cong username va password thi se chay vao day
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
-        log.info("filter 1");
         User user =(User) authentication.getPrincipal();
         Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
         String access_token = JWT.create()
@@ -59,7 +58,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .withExpiresAt(new Date(System.currentTimeMillis()+10*60*1000))
                 .withIssuer(request.getRequestURI().toString())
                 .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining()))
-                .withClaim("userId", "ahiahia")
                 .sign(algorithm);
         String refresh_token = JWT.create()
                 .withSubject(user.getUsername())
@@ -78,5 +76,4 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         log.info(responseBody.toString());
         new ObjectMapper().writeValue(response.getOutputStream(), responseBody);
     }
-
 }

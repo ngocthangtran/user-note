@@ -30,7 +30,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
-        log.info("config 1");
     }
 
     @Override
@@ -38,7 +37,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         log.info("config 2");
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/").hasAnyAuthority("ADMIN");
+        http.authorizeRequests()
+                .antMatchers("/login/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/user/").hasAnyAuthority("ADMIN")
+                .anyRequest().authenticated();
         http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean()));
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }

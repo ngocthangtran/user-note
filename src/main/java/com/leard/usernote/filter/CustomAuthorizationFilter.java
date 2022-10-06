@@ -7,6 +7,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.leard.usernote.entity.ResponeObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -48,11 +49,10 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                     filterChain.doFilter(request, response);
                 }catch (Exception e){
-                    log.error("Error loggin in: {}", e.getMessage());
                     response.setHeader("error", e.getMessage());
-                    response.setStatus(HttpStatus.FORBIDDEN.value());
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
                     Map<String, String> error = new HashMap<>();
-//        responseBody.put("userId", user.)
+                    error.put("status", "ng");
                     error.put("errorMessage", e.getMessage());
                     response.setContentType(APPLICATION_JSON_VALUE);
                     log.info(error.toString());
